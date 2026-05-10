@@ -16,7 +16,9 @@ function errorHandler(err, req, res, next) {
     return res.status(404).json({ error: 'Resource not found' });
   }
   if (err.code === PRISMA_UNIQUE) {
-    const field = err.meta?.target?.[0] ?? 'field';
+    // Prisma 5: meta.target may be an array ['email'] or a string 'User_email_key'
+    const raw = err.meta?.target;
+    const field = Array.isArray(raw) ? raw[0] : (typeof raw === 'string' ? raw.split('_')[1] : 'field') ?? 'field';
     return res.status(409).json({ error: `${field} already in use` });
   }
   if (err.code === PRISMA_FK) {
