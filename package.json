@@ -1,0 +1,11 @@
+{
+  "name": "cinema",
+  "private": true,
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "dev:api": "npm run dev --workspace=packages/api",
+    "dev:ui": "npm run dev --workspace=packages/ui",
+    "db:migrate": "npm run db:migrate --workspace=packages/api",
+    "db:seed": "npm run db:seed --workspace=packages/api"
+  }
+}

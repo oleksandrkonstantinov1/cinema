@@ -1,0 +1,16 @@
+{
+  "name": "@cinema/shared",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "module": "index.mjs",
+  "exports": {
+    ".": {
+      "import": "./index.mjs",
+      "require": "./index.js"
+    }
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  }
+}

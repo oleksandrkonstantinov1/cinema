@@ -1,0 +1,29 @@
+node_modules/
+
+# Environment files
+.env
+.env.local
+packages/api/.env
+packages/ui/.env
+
+# Build output
+dist/
+build/
+
+# Prisma migrations (keep schema, ignore dev snapshots)
+packages/api/prisma/migrations/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Claude Code local settings
+.claude/settings.local.json

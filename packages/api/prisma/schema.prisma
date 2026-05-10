@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(USER)
+  createdAt    DateTime @default(now())
+  tickets      Ticket[]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Film {
+  id          Int       @id @default(autoincrement())
+  name        String
+  releaseDate DateTime
+  categoryId  Int
+  countryId   Int
+  category    Category  @relation(fields: [categoryId], references: [id])
+  country     Country   @relation(fields: [countryId], references: [id])
+  sessions    Session[]
+}
+
+model Category {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  films Film[]
+}
+
+model Country {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  films Film[]
+}
+
+model Hall {
+  id       Int       @id @default(autoincrement())
+  name     String
+  address  String
+  city     String
+  capacity Int
+  sessions Session[]
+}
+
+model SessionType {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  sessions Session[]
+}
+
+model Session {
+  id               Int         @id @default(autoincrement())
+  name             String
+  date             DateTime
+  description      String
+  ticketPrice      Decimal     @db.Decimal(10, 2)
+  availableTickets Int
+  hallId           Int
+  filmId           Int
+  typeId           Int
+  hall             Hall        @relation(fields: [hallId], references: [id])
+  film             Film        @relation(fields: [filmId], references: [id])
+  type             SessionType @relation(fields: [typeId], references: [id])
+  tickets          Ticket[]
+}
+
+model Ticket {
+  id           Int          @id @default(autoincrement())
+  sessionId    Int
+  userId       Int
+  purchaseDate DateTime     @default(now())
+  status       TicketStatus @default(BOOKED)
+  session      Session      @relation(fields: [sessionId], references: [id])
+  user         User         @relation(fields: [userId], references: [id])
+}
+
+enum TicketStatus {
+  BOOKED
+  PAID
+  CANCELLED
+}
