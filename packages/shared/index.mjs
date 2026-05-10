@@ -14,6 +14,13 @@ export const loginSchema = z.object({
   password: z.string().min(1),
 });
 
+export const updateMeSchema = z
+  .object({
+    email: z.string().email().optional(),
+    password: z.string().min(8, 'Password must be at least 8 characters').optional(),
+  })
+  .refine((d) => d.email || d.password, { message: 'Provide email or password' });
+
 // ── Session ───────────────────────────────────────────
 const hallSchema = z.object({
   name: z.string().min(3),
