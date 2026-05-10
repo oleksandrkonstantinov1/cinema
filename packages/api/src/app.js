@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
-const { NODE_ENV } = require('./config/env');
 const errorHandler = require('./middleware/errorHandler');
 
 const authRouter = require('./modules/auth/auth.router');
@@ -13,15 +12,23 @@ const countriesRouter = require('./modules/countries/countries.router');
 const usersRouter = require('./modules/users/users.router');
 const sessionTypesRouter = require('./modules/session-types/session-types.router');
 
+const ALLOWED_ORIGINS = new Set([
+  process.env.FRONTEND_URL,          // e.g. https://your-app.netlify.app
+  'http://localhost:5173',
+  'http://localhost:4173',            // vite preview
+].filter(Boolean));
+
 const app = express();
 
-app.use(helmet());
 app.use(cors({
-  origin: NODE_ENV === 'production'
-    ? 'https://your-app.netlify.app'
-    : 'http://localhost:5173',
+  origin(origin, callback) {
+    // allow non-browser requests (curl, Render health checks) and known origins
+    if (!origin || ALLOWED_ORIGINS.has(origin)) return callback(null, true);
+    callback(new Error(`CORS: origin ${origin} not allowed`));
+  },
   credentials: true,
 }));
+app.use(helmet());
 app.use(express.json());
 
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
